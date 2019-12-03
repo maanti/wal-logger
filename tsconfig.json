@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "commonjs",
+    "allowJs": false,
+    "outDir": "./dist",
+    "rootDir": "./app",
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "esModuleInterop": true,
+    "sourceMap": true
+  },
+  "include": [
+    "./app/**/*.ts"
+  ]
+}
