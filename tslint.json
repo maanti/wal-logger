@@ -1,69 +1,69 @@
 {
-  "defaultSeverity": "error",
-  "extends": [
-    "tslint:recommended"
-  ],
-  "allowJs": false,
-  "jsRules": {
-    "no-empty": true
-  },
-  "rules": {
-    "curly": true,
-    "forin": false,
-    "max-classes-per-file": false,
-    "no-bitwise": false,
-    "no-consecutive-blank-lines": [
-      true,
-      2
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
     ],
-    "no-console": [
-      false
-    ],
-    "no-floating-promises": true,
-    "no-duplicate-variable": [
-      true,
-      "check-parameters"
-    ],
-    "no-string-literal": false,
-    "no-var-keyword": true,
-    "no-unbound-method": [
-      true,
-      "ignore-static"
-    ],
-    "object-literal-sort-keys": false,
-    "ordered-imports": false,
-    "one-line": false,
-    "prefer-const": [
-      true,
-      {
-        "destructuring": "all"
-      }
-    ],
-    "radix": false,
-    "trailing-comma": [
-      true,
-      {
-        "multiline": {
-          "objects": "never",
-          "arrays": "never",
-          "functions": "never",
-          "typeLiterals": "ignore"
-        },
-        "esSpecCompliant": true
-      }
-    ],
-    "quotemark": [
-      true,
-      "double",
-      "avoid-escape",
-      "avoid-template"
-    ],
-    "variable-name": [
-      true,
-      "ban-keywords",
-      "check-format",
-      "allow-leading-underscore"
-    ],
-    "prefer-template": true
-  }
+    "allowJs": false,
+    "jsRules": {
+        "no-empty": true
+    },
+    "rules": {
+        "curly": true,
+        "forin": false,
+        "max-classes-per-file": false,
+        "no-bitwise": false,
+        "no-consecutive-blank-lines": [
+            true,
+            2
+        ],
+        "no-console": [
+            false
+        ],
+        "no-floating-promises": true,
+        "no-duplicate-variable": [
+            true,
+            "check-parameters"
+        ],
+        "no-string-literal": false,
+        "no-var-keyword": true,
+        "no-unbound-method": [
+            true,
+            "ignore-static"
+        ],
+        "object-literal-sort-keys": false,
+        "ordered-imports": false,
+        "one-line": false,
+        "prefer-const": [
+            true,
+            {
+                "destructuring": "all"
+            }
+        ],
+        "radix": false,
+        "trailing-comma": [
+            true,
+            {
+                "multiline": {
+                    "objects": "never",
+                    "arrays": "never",
+                    "functions": "never",
+                    "typeLiterals": "ignore"
+                },
+                "esSpecCompliant": true
+            }
+        ],
+        "quotemark": [
+            true,
+            "double",
+            "avoid-escape",
+            "avoid-template"
+        ],
+        "variable-name": [
+            true,
+            "ban-keywords",
+            "check-format",
+            "allow-leading-underscore"
+        ],
+        "prefer-template": true
+    }
 }

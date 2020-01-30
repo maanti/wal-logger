@@ -1,26 +1,50 @@
 {
-  "name": "wal-logger",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node dist/index.js"
-  },
-  "keywords": [],
-  "author": "Matvey Antipov",
-  "license": "ISC",
-  "dependencies": {
-    "mongodb": "^3.3.5",
-    "pg": "^7.14.0"
-  },
-  "devDependencies": {
-    "typescript": "^3.7.2",
-    "tslint": "^5.20.1",
-    "@types/node": "^12.12.14",
-    "@types/pg": "^7.11.2",
-    "@types/mongodb": "^3.3.11"
-  }
+    "name": "wal-logger",
+    "version": "0.0.1",
+    "description": "Logs all changes in a database using PostgreSQL's logical decoding",
+    "main": "index.js",
+    "nyc": {
+        "extension": [
+            ".ts"
+        ],
+        "reporter": [
+            "html"
+        ],
+        "all": true,
+        "exclude": [
+            "dist",
+            "coverage"
+        ]
+    },
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "test": "nyc mocha --exit",
+        "start": "tsc && node dist/index.js"
+    },
+    "keywords": [
+        "logical-replication",
+        "CDC",
+        "WAL",
+        "PostgreSQL"
+    ],
+    "author": "Matvey Antipov",
+    "license": "apache-2.0",
+    "dependencies": {
+        "node-cache": "^5.1.0",
+        "pg": "^7.14.0"
+    },
+    "devDependencies": {
+        "@types/mocha": "^5.2.7",
+        "@types/node": "^12.12.14",
+        "@types/pg": "^7.11.2",
+        "@types/sinon": "^7.5.1",
+        "mocha": "^6.2.2",
+        "sinon": "^7.5.0",
+        "ts-node": "^8.5.4",
+        "ts-sinon": "^1.0.24",
+        "tslint": "^5.20.1",
+        "typescript": "^3.7.2",
+        "nyc": "^14.1.1"
+    }
 }
