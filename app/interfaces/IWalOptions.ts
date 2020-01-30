@@ -1,5 +1,5 @@
 // 0 | 1 — C-style boolean representation (wal2json is written in C)
-interface IWal2jsonOptions {
+export default interface IWalOptions {
     "include-xids"?: 0 | 1;
     "include-timestamp"?: 0 | 1;
     "include-schemas"?: 0 | 1;

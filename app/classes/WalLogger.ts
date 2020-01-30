@@ -1,79 +1,60 @@
-import ChangeListener from "./ChangeListener";
-import * as pg from "pg";
+import PKeysCache from "./PKeysCache";
+import Message from "./Message";
 import DbWriter from "./DbWriter/DbWriter";
-import PostgresWriter from "./DbWriter/PostgresWriter";
+import ChangeListener from "./ChangeListener";
+import IWal2JsonEvent from "../interfaces/IWal2JsonEvent";
 
 /**
  * Main class.
  * Logging changes in parent app's database and store them.
  */
 export default class WalLogger {
-
-    /**
-     * Checks if all params are passed
-     * @param config object of IDbConfig interface
-     */
-    private static validateDbConfig(config: IDbConfig) {
-        if (!config.user) {
-            throw new Error("DB_USER env variable isn't set");
-        } else if (!config.password) {
-            throw new Error("DB_PASSWORD env variable isn't set");
-        } else if (!config.database) {
-            throw new Error("DB_NAME env variable isn't set");
-        }
-        return true;
-    }
-
-    private readonly dbConfig: IDbConfig;
-    private readonly options: IOptions;
-    private readonly wal2sonOptions: IWal2jsonOptions;
-    private dbWriter: DbWriter;
+    private readonly _pKeysCache: PKeysCache;
+    private readonly _changeListener: ChangeListener;
+    private _dbWriter: DbWriter;
 
     constructor(
-        dbConfig: IDbConfig,
-        options: IOptions,
-        wal2jsonOptions: IWal2jsonOptions
+        changeListener: ChangeListener,
+        dbWriter: DbWriter,
+        pKeysCache: PKeysCache
     ) {
-        WalLogger.validateDbConfig(dbConfig);
-        this.dbConfig = dbConfig;
-        this.options = options;
-        this.wal2sonOptions = wal2jsonOptions;
+        this._changeListener = changeListener;
+        this._dbWriter = dbWriter;
+        this._pKeysCache = pKeysCache;
     }
 
     /**
      * Entry point. Starts data change listener.
      */
     public async start() {
-        const changeListener = new ChangeListener(
-            new pg.Client(this.dbConfig),
-            this.options,
-            this.wal2sonOptions
-        );
 
-        changeListener.on("changes", async (changes) => {
-            await this.onChange(changes);
-            console.log(JSON.stringify(changes));
-            changeListener.next();
+        this._changeListener.on("changes", async (changes) => {
+            this.onChange(changes);
+            await this._changeListener.next();
         });
 
-        changeListener.on("error", (err) => {
-            console.log("err: ", err);
+        this._changeListener.on("error", (err) => {
+            console.error("err: ", err);
         });
 
         await this.initDbWriter();
-        await changeListener.start();
+        await this._changeListener.start();
     }
 
-    private async onChange(changes: any[]) {
-        let changesData: any[] = changes.map((change: any) => change.data);
-        for (const changeData of changesData) {
-            changesData = JSON.parse(changeData);
-            await this.dbWriter.writeRow(changesData);
+    private onChange(rawChanges: Array<{ data: string }>): void {
+        const changes: IWal2JsonEvent[] = [];
+        for (const rawChange of rawChanges) {
+            changes.push(...JSON.parse(rawChange.data).change);
+        }
+
+        for (const change of changes) {
+            change.pkColumns = this._pKeysCache.get(`${change.schema}.${change.table}`);
+            const message: Message = new Message(change);
+            this._dbWriter.saveMessage(message);
         }
     }
 
     private async initDbWriter() {
-        this.dbWriter = new PostgresWriter();
-        await this.dbWriter.connect();
+        await this._dbWriter.connect();
     }
 }
