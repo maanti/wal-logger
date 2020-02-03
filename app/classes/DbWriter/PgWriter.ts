@@ -15,16 +15,8 @@ interface IRow {
 export default class PgWriter extends DbWriter {
     private readonly _client: Client;
 
-    constructor() {
+    constructor(config: ClientConfig) {
         super();
-
-        const config: ClientConfig = {
-            user: process.env.LOG_DB_USER,
-            password: process.env.LOG_DB_PASSWORD,
-            database: process.env.LOG_DB_NAM,
-            host: process.env.LOG_DB_HOST,
-            port: Number(process.env.LOG_DB_PORT)
-        };
 
         this._client = new Client(config);
     }

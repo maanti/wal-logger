@@ -1,6 +1,6 @@
 import WalLogger from "../app/classes/WalLogger";
 import assert from "assert";
-import {Client} from "pg";
+import {Client, ClientConfig} from "pg";
 import ChangeListener from "../app/classes/ChangeListener";
 import PgWriter from "../app/classes/DbWriter/PgWriter";
 import PKeysCache from "../app/classes/PKeysCache";
@@ -12,6 +12,13 @@ describe("WalLogger", () => {
     let changeListener: ChangeListener;
     let dbWriter: DbWriter;
     let pKeysCache: PKeysCache;
+    const config: ClientConfig = {
+        user: "test",
+        password: "test",
+        database: "test",
+        host: "test",
+        port: 5432
+    };
 
     beforeEach(async () => {
         db = new Client();
@@ -31,7 +38,7 @@ describe("WalLogger", () => {
             db
         );
         sinon.stub(changeListener, "next").resolves();
-        dbWriter = new PgWriter();
+        dbWriter = new PgWriter(config);
         sinon.stub(dbWriter, "connect").resolves();
         pKeysCache = new PKeysCache(db);
         await pKeysCache.init();

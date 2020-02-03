@@ -31,6 +31,7 @@
     "author": "Matvey Antipov",
     "license": "apache-2.0",
     "dependencies": {
+        "dotenv": "^8.2.0",
         "node-cache": "^5.1.0",
         "pg": "^7.14.0"
     },

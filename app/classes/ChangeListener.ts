@@ -6,7 +6,6 @@ import IWalOptions from "../interfaces/IWalOptions";
 import Timeout = NodeJS.Timeout;
 
 export default class ChangeListener extends EventEmitter {
-    private static readonly DEFAULT_TIMEOUT = Number(process.env.DEFAULT_TIMEOUT) || 10 * 1000; // 10 s
     private readonly _slotName: string | undefined;
     private readonly _walOptions: IWalOptions;
     private readonly _createIfNotExists: boolean;
@@ -23,9 +22,6 @@ export default class ChangeListener extends EventEmitter {
         const {slotName, timeout, createIfNotExists} = options;
         this._slotName = slotName;
         this._timeout = timeout;
-        if (timeout == null) {
-            this._timeout = ChangeListener.DEFAULT_TIMEOUT;
-        }
         this._createIfNotExists = createIfNotExists || false;
 
         this._db = db;

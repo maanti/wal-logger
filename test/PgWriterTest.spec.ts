@@ -1,16 +1,24 @@
 import PgWriter from "../app/classes/DbWriter/PgWriter";
 import sinon from "sinon";
 import assert from "assert";
-import {Client} from "pg";
+import {Client, ClientConfig} from "pg";
 import Message from "../app/classes/Message";
 import IWal2JsonEvent from "../app/interfaces/IWal2JsonEvent";
 
 describe("PgWriter", () => {
+    const config: ClientConfig = {
+        user: "test",
+        password: "test",
+        database: "test",
+        host: "test",
+        port: 5432
+    };
     describe("connect", () => {
         it("should call pg.Client.connect() method", () => {
             // Arrange
             const spy = sinon.spy();
-            const postgresWriter = new PgWriter();
+            // tslint:disable-next-line:prefer-const
+            const postgresWriter = new PgWriter(config);
             const client = postgresWriter.client;
             sinon.stub(client, "connect").callsFake(() => {
                 spy();
@@ -54,7 +62,7 @@ describe("PgWriter", () => {
                     newValue: 1
                 }
             };
-            const postgresWriter = new PgWriter();
+            const postgresWriter = new PgWriter(config);
             const toClient = postgresWriter.client;
             sinon.stub(toClient, "connect").resolves();
             sinon.stub(toClient, "query").callsFake((query) => {
