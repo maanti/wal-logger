@@ -8,7 +8,8 @@
         "strict": true,
         "strictPropertyInitialization": false,
         "esModuleInterop": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "noImplicitAny": true
     },
     "include": [
         "./app/**/*.ts"
