@@ -21,7 +21,7 @@ export default class PgWriter extends DbWriter {
         this._client = new Client(config);
     }
 
-    public get client() {
+    public get client(): Client {
         return this._client;
     }
 
@@ -33,6 +33,9 @@ export default class PgWriter extends DbWriter {
         const {diff, schema, table, type, pKey} = message;
         const query = `${schema}.${table}`;
         for (const field in diff) {
+            if (!diff.hasOwnProperty(field)) {
+                continue;
+            }
             const {oldValue, newValue} = diff[field];
             const row: IRow = {
                 query,
@@ -57,7 +60,7 @@ export default class PgWriter extends DbWriter {
             pKey
         } = row;
         this.client.query(`
-            INSERT INTO log(query,
+            INSERT INTO log(table_name,
                             field,
                             old_value,
                             new_value,

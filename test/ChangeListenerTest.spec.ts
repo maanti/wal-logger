@@ -5,12 +5,13 @@ import ChangeListener from "../app/classes/ChangeListener";
 
 describe("ChangeListener", () => {
     describe("start", () => {
-        it("starts without errors", () => {
+        it("starts without errors", async () => {
             // Arrange
             const client = new Client();
             sinon.stub(client, "connect").resolves();
             const changeListener = new ChangeListener(
-                client
+                client,
+                {timeout: 0}
             );
             const errorSpy = sinon.spy();
             sinon.stub(changeListener, "initReplicationSlot").resolves();
@@ -19,7 +20,7 @@ describe("ChangeListener", () => {
                 errorSpy();
             });
             // Act
-            changeListener.start();
+            await changeListener.start();
             // Assert
             assert(!errorSpy.called, "error occurred on listener start up");
         });
@@ -30,7 +31,8 @@ describe("ChangeListener", () => {
             sinon.stub(client, "connect").resolves();
             sinon.stub(client, "end").resolves();
             const changeListener = new ChangeListener(
-                client
+                client,
+                {timeout: 1}
             );
             const errorSpy = sinon.spy();
             sinon.stub(changeListener, "initReplicationSlot").resolves();
@@ -167,30 +169,6 @@ describe("ChangeListener", () => {
                 await changeListener.start();
             });
         });
-
-        it("error getting changes", async () => {
-            // Arrange
-            const clock = sinon.useFakeTimers();
-            const client = new Client();
-            sinon.stub(client, "connect").resolves();
-            sinon.stub(client, "end").resolves();
-            sinon.stub(client, "query").rejects();
-            const errorSpy = sinon.spy();
-            const changeListener = new ChangeListener(
-                client,
-                {timeout: 1}
-            );
-            sinon.stub(changeListener, "initReplicationSlot").resolves();
-            changeListener.on("error", () => {
-                errorSpy();
-            });
-            // Act
-            await changeListener.start();
-            await clock.tick(10);
-            // Assert
-            assert(errorSpy.called, "if readChanges() unsuccessful, emit error event");
-            clock.restore();
-        });
     });
 
     describe("next()", () => {
@@ -200,7 +178,8 @@ describe("ChangeListener", () => {
             sinon.stub(client, "connect").resolves();
             sinon.stub(client, "end").resolves();
             const changeListener = new ChangeListener(
-                client
+                client,
+                {timeout: 1}
             );
             const errorSpy = sinon.spy();
             sinon.stub(changeListener, "initReplicationSlot").resolves();

@@ -2,7 +2,6 @@
 import dotenv from "dotenv";
 import WalLogger from "./classes/WalLogger";
 import {Client, ClientConfig} from "pg";
-import IDbConf from "./interfaces/IDbConf";
 import IOptions from "./interfaces/IOptions";
 import IWalOptions from "./interfaces/IWalOptions";
 import ChangeListener from "./classes/ChangeListener";
@@ -20,10 +19,11 @@ import PKeysCache from "./classes/PKeysCache";
      * changeListenerOptions - for change listener class
      * walOptions - for wal2json PostgreSQL logical decoding plugin.
      */
-    const masterDbConf: IDbConf = {
+    const masterDbConf: ClientConfig = {
         user: process.env.MASTER_DB_USER,
         password: process.env.MASTER_DB_PASSWORD,
         database: process.env.MASTER_DB_NAME,
+        host: process.env.MASTER_DB_HOST,
         port: Number(process.env.MASTER_DB_PORT)
     };
 
@@ -42,21 +42,22 @@ import PKeysCache from "./classes/PKeysCache";
 
     const walOptions: IWalOptions = {
         // transaction ID
-        "include-xids": 1
+        "include-xids": 1,
+        "filter-tables": process.env.FILTER_TABLES // comma-separated
     };
 
     try {
-        const db = new Client(masterDbConf);
+        const db: Client = new Client(masterDbConf);
         await db.connect();
-        const changeListener = new ChangeListener(
+        const changeListener: ChangeListener = new ChangeListener(
             db,
             changeListenerOptions,
             walOptions
         );
-        const dbWriter = new PgWriter(slaveDbConf);
-        const pKeysCache = new PKeysCache(db);
+        const dbWriter: PgWriter = new PgWriter(slaveDbConf);
+        const pKeysCache: PKeysCache = new PKeysCache(db);
         await pKeysCache.init();
-        const walLogger = new WalLogger(changeListener, dbWriter, pKeysCache);
+        const walLogger: WalLogger = new WalLogger(changeListener, dbWriter, pKeysCache);
         await walLogger.start();
     } catch (e) {
         console.error(e.message);

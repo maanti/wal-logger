@@ -44,7 +44,7 @@ export default class PKeysCache {
     }
 
     public async init(): Promise<void> {
-        const allTablesPKeyQuery = `
+        const allTablesPKeyQuery: string = `
             SELECT tc.table_schema AS schema,
                 tc.table_name AS "table",
                 array_agg(kc.column_name) AS pk
@@ -58,8 +58,8 @@ export default class PKeysCache {
             GROUP BY tc.table_schema, tc.table_name;
         `;
 
-        const result = await this._db.query(allTablesPKeyQuery);
-        let columns;
+        const result: any = await this._db.query(allTablesPKeyQuery);
+        let columns: RegExpMatchArray;
         for (const row of result.rows) {
             const {schema, table, pk} = row;
             if (pk) {

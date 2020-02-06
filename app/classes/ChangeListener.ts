@@ -59,13 +59,13 @@ export default class ChangeListener extends EventEmitter {
     }
 
     public async initReplicationSlot(): Promise<void> {
-        const results = await this._db.query(`
+        const {rows}: any = await this._db.query(`
             SELECT
             FROM pg_replication_slots
             WHERE slot_name = $1;
         `, [this._slotName]);
 
-        const slotExists: boolean = !!results.rows.length;
+        const slotExists: boolean = !!rows.length;
 
         if (!slotExists) {
             await this._db.query(
@@ -80,6 +80,9 @@ export default class ChangeListener extends EventEmitter {
     private getSlotChangesQuery(): IQuery {
         const changesSql: string[] = [];
         for (const option in this._walOptions) {
+            if (!this._walOptions.hasOwnProperty(option)) {
+                continue;
+            }
             // @ts-ignore
             const value: string = String(this._walOptions[option]);
             changesSql.push(option);
@@ -102,10 +105,10 @@ export default class ChangeListener extends EventEmitter {
 
     private async readChanges(): Promise<void> {
         try {
-            const results = await this._db.query(this._readQuery);
+            const {rows} = await this._db.query(this._readQuery);
             this._waiting = false;
-            if (results.rows.length > 0) {
-                this.emit("changes", results.rows);
+            if (rows.length > 0) {
+                this.emit("changes", rows);
             } else {
                 await this.next();
             }

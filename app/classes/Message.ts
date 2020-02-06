@@ -12,8 +12,9 @@ export default class Message implements IMessage {
     public table: string;
     public type: "insert" | "update" | "delete";
     public pKey: IStrDict<string | number>;
-    private readonly oldObj: IChange;
-    private readonly newObj: IChange;
+    private oldObj: IChange;
+    private newObj: IChange;
+    private jsonParser: JsonParser;
 
     constructor(walEvent: IWal2JsonEvent) {
         const {
@@ -29,15 +30,63 @@ export default class Message implements IMessage {
         this.schema = schema;
         this.table = table;
         this.type = kind;
-        const jsonParser = new JsonParser();
-        this.newObj = jsonParser.buildObject(columnnames, columnvalues, columntypes);
+        this.jsonParser = new JsonParser();
+        switch (this.type) {
+            case "insert":
+                this.createInsertMessage(walEvent);
+                break;
+            case "update":
+                this.createUpdateMessage(walEvent);
+                break;
+            case "delete":
+            // this.createDeleteMessage(walEvent);
+        }
+
+    }
+
+    private createInsertMessage(walEvent: IWal2JsonEvent) {
+        const {
+            columnnames,
+            columntypes,
+            columnvalues,
+            pkColumns
+        } = walEvent;
+        this.newObj = this.jsonParser.buildObject(columnnames, columnvalues, columntypes);
+        this.diff = this.jsonParser.getDiffObject({}, this.newObj);
+        this.pKey = this.jsonParser.buildPKeys(this.newObj, pkColumns);
+    }
+
+    private createUpdateMessage(walEvent: IWal2JsonEvent) {
+        const {
+            columnnames,
+            columntypes,
+            columnvalues,
+            pkColumns,
+            oldkeys
+        } = walEvent;
+        this.newObj = this.jsonParser.buildObject(columnnames, columnvalues, columntypes);
         const {
             keynames,
             keytypes,
             keyvalues
         } = oldkeys;
-        this.oldObj = jsonParser.buildObject(keynames, keyvalues, keytypes);
-        this.diff = jsonParser.getDiffObject(this.oldObj, this.newObj);
-        this.pKey = jsonParser.buildPKeys(this.oldObj, pkColumns);
+        this.oldObj = this.jsonParser.buildObject(keynames, keyvalues, keytypes);
+        this.diff = this.jsonParser.getDiffObject(this.oldObj, this.newObj);
+        this.pKey = this.jsonParser.buildPKeys(this.oldObj, pkColumns);
     }
+
+    // private createDeleteMessage(walEvent) {
+    //     const {
+    //         pkColumns,
+    //         oldkeys
+    //     } = walEvent;
+    //     const {
+    //         keynames,
+    //         keytypes,
+    //         keyvalues
+    //     } = oldkeys;
+    //     this.oldObj = this.jsonParser.buildObject(keynames, keyvalues, keytypes);
+    //     this.diff = this.jsonParser.getDiffObject(this.oldObj, this.newObj);
+    //     this.pKey = this.jsonParser.buildPKeys(this.oldObj, pkColumns);
+    // }
 }

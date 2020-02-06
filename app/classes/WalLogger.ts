@@ -27,13 +27,12 @@ export default class WalLogger {
      * Entry point. Starts data change listener.
      */
     public async start() {
-
-        this._changeListener.on("changes", async (changes) => {
+        this._changeListener.on("changes", async (changes: Array<{ data: string }>) => {
             this.onChange(changes);
             await this._changeListener.next();
         });
 
-        this._changeListener.on("error", (err) => {
+        this._changeListener.on("error", (err: Error) => {
             console.error("err: ", err);
         });
 
@@ -54,7 +53,7 @@ export default class WalLogger {
         }
     }
 
-    private async initDbWriter() {
+    private async initDbWriter(): Promise<void> {
         await this._dbWriter.connect();
     }
 }

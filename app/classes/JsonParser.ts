@@ -4,9 +4,9 @@ import IStrDict from "../interfaces/IStrDict";
 
 export default class JsonParser {
     public buildObject(names: string[], values: any[], types: string[]): IChange {
-        const areArraysSameLength = names.length === values.length && values.length === types.length;
+        const areArraysSameLength: boolean = names.length === values.length && values.length === types.length;
 
-        if (!(areArraysSameLength)) {
+        if (!areArraysSameLength) {
             throw new Error("Arrays of different size passed");
         }
 
@@ -23,7 +23,10 @@ export default class JsonParser {
     public getDiffObject(oldObj: IChange, newObj: IChange): IDiff {
         const diffObj: IDiff = {};
         for (const column in newObj) {
-            const oldValue = oldObj[column]?.value || "";
+            if (!newObj.hasOwnProperty(column)) {
+                continue;
+            }
+            const oldValue = oldObj[column] && oldObj[column].value;
             const newValue = newObj[column].value;
             // tslint:disable-next-line:triple-equals
             if (oldValue != newValue) {
@@ -37,10 +40,10 @@ export default class JsonParser {
         return diffObj;
     }
 
-    public buildPKeys(oldObj: IChange, columns: string[] = []): IStrDict<string | number> {
+    public buildPKeys(obj: IChange, columns: string[] = []): IStrDict<string | number> {
         const pKey: IStrDict<string | number> = {};
         for (const column of columns) {
-            pKey[column] = oldObj[column].value;
+            pKey[column] = obj[column].value;
         }
         return pKey;
     }
