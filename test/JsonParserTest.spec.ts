@@ -262,7 +262,7 @@ describe("JsonParser", () => {
 
             const expectedObj: IDiff = {
                 deleted: {
-                    oldValue: "",
+                    oldValue: undefined,
                     newValue: 0
                 }
             };

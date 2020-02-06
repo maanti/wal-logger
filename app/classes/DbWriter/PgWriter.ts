@@ -6,8 +6,8 @@ import IStrDict from "../../interfaces/IStrDict";
 interface IRow {
     query: string;
     field: string;
-    oldValue: string | number;
-    newValue: string | number;
+    oldValue: string | number | undefined;
+    newValue: string | number | undefined;
     type: "insert" | "update" | "delete";
     pKey: IStrDict<string | number>;
 }
