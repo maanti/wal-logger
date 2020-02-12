@@ -36,7 +36,6 @@ export default class WalLogger {
             console.error("err: ", err);
         });
 
-        await this.initDbWriter();
         await this._changeListener.start();
     }
 
@@ -51,9 +50,5 @@ export default class WalLogger {
             const message: Message = new Message(change);
             this._dbWriter.saveMessage(message);
         }
-    }
-
-    private async initDbWriter(): Promise<void> {
-        await this._dbWriter.connect();
     }
 }

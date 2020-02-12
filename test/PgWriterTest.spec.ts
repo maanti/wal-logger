@@ -1,34 +1,18 @@
 import PgWriter from "../app/classes/DbWriter/PgWriter";
 import sinon from "sinon";
 import assert from "assert";
-import {Client, ClientConfig} from "pg";
+import {Client} from "pg";
 import Message from "../app/classes/Message";
 import IWal2JsonEvent from "../app/interfaces/IWal2JsonEvent";
 
 describe("PgWriter", () => {
-    const config: ClientConfig = {
-        user: "test",
-        password: "test",
-        database: "test",
-        host: "test",
-        port: 5432
-    };
-    describe("connect", () => {
-        it("should call pg.Client.connect() method", () => {
-            // Arrange
-            const spy = sinon.spy();
-            // tslint:disable-next-line:prefer-const
-            const postgresWriter = new PgWriter(config);
-            const client = postgresWriter.client;
-            sinon.stub(client, "connect").callsFake(() => {
-                spy();
-            });
-            // Act
-            postgresWriter.connect().then(() => {
-                // Assert
-                assert(spy.called,
-                    "postgresWriter connection should create pg.Client's connection");
-            });
+    describe("constructor", () => {
+        it("try create", () => {
+            // Assert
+            assert.doesNotThrow(async () => {
+                // Act
+                const postgresWriter = new PgWriter(new Client());
+            }, "should be created without errors");
         });
     });
 
@@ -62,7 +46,7 @@ describe("PgWriter", () => {
                     newValue: 1
                 }
             };
-            const postgresWriter = new PgWriter(config);
+            const postgresWriter = new PgWriter(new Client());
             const toClient = postgresWriter.client;
             sinon.stub(toClient, "connect").resolves();
             sinon.stub(toClient, "query").callsFake((query) => {

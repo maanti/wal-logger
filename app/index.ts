@@ -7,8 +7,8 @@ import IWalOptions from "./interfaces/IWalOptions";
 import ChangeListener from "./classes/ChangeListener";
 import PgWriter from "./classes/DbWriter/PgWriter";
 import PKeysCache from "./classes/PKeysCache";
+import {Server} from "./api/Server";
 
-// TODO: API на вход получает имя таблицы и массив ID или диапазон дат
 (async () => {
     // Load environment variables
     dotenv.config();
@@ -49,12 +49,16 @@ import PKeysCache from "./classes/PKeysCache";
     try {
         const db: Client = new Client(masterDbConf);
         await db.connect();
+        const slaveDb = new Client(slaveDbConf);
+        await slaveDb.connect();
+        const server = new Server(slaveDb);
+        server.initRoutes();
         const changeListener: ChangeListener = new ChangeListener(
             db,
             changeListenerOptions,
             walOptions
         );
-        const dbWriter: PgWriter = new PgWriter(slaveDbConf);
+        const dbWriter: PgWriter = new PgWriter(slaveDb);
         const pKeysCache: PKeysCache = new PKeysCache(db);
         await pKeysCache.init();
         const walLogger: WalLogger = new WalLogger(changeListener, dbWriter, pKeysCache);

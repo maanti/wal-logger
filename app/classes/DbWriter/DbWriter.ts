@@ -1,7 +1,12 @@
 import Message from "../Message";
+import {Client} from "pg";
 
 export default abstract class DbWriter {
-    public abstract connect(): Promise<void>;
+    protected _client: Client;
+
+    protected constructor(client: Client) {
+        this._client = client;
+    }
 
     public abstract saveMessage(message: Message): void;
 }

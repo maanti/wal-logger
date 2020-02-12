@@ -1,5 +1,5 @@
 import DbWriter from "./DbWriter";
-import {Client, ClientConfig} from "pg";
+import {Client} from "pg";
 import Message from "../Message";
 import IStrDict from "../../interfaces/IStrDict";
 
@@ -13,20 +13,12 @@ interface IRow {
 }
 
 export default class PgWriter extends DbWriter {
-    private readonly _client: Client;
-
-    constructor(config: ClientConfig) {
-        super();
-
-        this._client = new Client(config);
+    constructor(client: Client) {
+        super(client);
     }
 
     public get client(): Client {
         return this._client;
-    }
-
-    public async connect(): Promise<void> {
-        await this._client.connect();
     }
 
     public saveMessage(message: Message): void {
@@ -47,7 +39,6 @@ export default class PgWriter extends DbWriter {
             };
             this.writeRow(row);
         }
-
     }
 
     private writeRow(row: IRow): void {
