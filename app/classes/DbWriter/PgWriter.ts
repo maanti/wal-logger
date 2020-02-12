@@ -25,9 +25,6 @@ export default class PgWriter extends DbWriter {
         const {diff, schema, table, type, pKey} = message;
         const query = `${schema}.${table}`;
         for (const field in diff) {
-            if (!diff.hasOwnProperty(field)) {
-                continue;
-            }
             const {oldValue, newValue} = diff[field];
             const row: IRow = {
                 query,

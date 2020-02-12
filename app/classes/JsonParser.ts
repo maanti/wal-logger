@@ -23,9 +23,6 @@ export default class JsonParser {
     public getDiffObject(oldObj: IChange, newObj: IChange): IDiff {
         const diffObj: IDiff = {};
         for (const column in newObj) {
-            if (!newObj.hasOwnProperty(column)) {
-                continue;
-            }
             const oldValue = oldObj[column] && oldObj[column].value;
             const newValue = newObj[column].value;
             // tslint:disable-next-line:triple-equals

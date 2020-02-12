@@ -15,7 +15,8 @@
             "dist",
             "coverage",
             "migrations",
-            "scripts"
+            "scripts",
+            "app/interfaces"
         ]
     },
     "scripts": {

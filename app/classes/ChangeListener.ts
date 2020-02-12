@@ -80,9 +80,6 @@ export default class ChangeListener extends EventEmitter {
     private getSlotChangesQuery(): IQuery {
         const changesSql: string[] = [];
         for (const option in this._walOptions) {
-            if (!this._walOptions.hasOwnProperty(option)) {
-                continue;
-            }
             // @ts-ignore
             const value: string = String(this._walOptions[option]);
             changesSql.push(option);
