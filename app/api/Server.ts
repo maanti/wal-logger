@@ -66,4 +66,8 @@ class Server {
             res.end();
         });
     }
+
+    get log() {
+        return this._log;
+    }
 }

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import request from "supertest";
 import {Server} from "../app/api/Server";
 import {IRequestData} from "../app/interfaces/IRequestData";
+import sinon from "sinon";
 
 
 describe("Server", () => {
@@ -31,6 +32,7 @@ describe("Server", () => {
 
         it("should return 200", (done: (err?: any) => void) => {
             const goodData = {ids: [78789], table: "table"};
+            sinon.stub(server.log, "getData").resolves();
             request(server.app)
                 .post("/log")
                 .send(goodData)
